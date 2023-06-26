@@ -1059,19 +1059,20 @@ MonoBehaviour:
   bulletTypes:
   - name: AP
     image: {fileID: 5601155684577458558, guid: a4bf19c6b79afbb47aab5bb26bc627b4, type: 3}
-    bullet: {fileID: 0}
-    penetration: 12
+    bullet: {fileID: 4972472315098237059, guid: c9fcf0b54cdcaad41a18f42637feb1da, type: 3}
+    penetration: 17
     damage: 5
   - name: HE
     image: {fileID: 7720691108372094123, guid: bf7513df3f60ac54d8863a2a8127de37, type: 3}
-    bullet: {fileID: 0}
-    penetration: 17
-    damage: 2
+    bullet: {fileID: 5793933059995206611, guid: e5d39cff9dac9c04081047aa2baeef3b, type: 3}
+    penetration: 5
+    damage: 10
   - name: APHE
     image: {fileID: 4240959886775251072, guid: 1e3a2fa1b2b61a74983c1df6494277e4, type: 3}
-    bullet: {fileID: 0}
-    penetration: 17
+    bullet: {fileID: 6397900039119313394, guid: 2a054a1134adcbf4fa050f83124bc732, type: 3}
+    penetration: 12
     damage: 2
+  standartBulletColor: {r: 1, g: 0.933954, b: 0, a: 1}
 --- !u!135 &827352396
 SphereCollider:
   m_ObjectHideFlags: 0
