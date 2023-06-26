@@ -60,6 +60,7 @@ public class TurretController : MonoBehaviour
     Color chosenBulletColor=Color.green;
     int chosenBulletIndex=-1;
     Dictionary<int,Image> bulletImageKeys=new Dictionary<int,Image>();
+    Coroutine reload;
 
     void Start()
     {
@@ -100,7 +101,6 @@ public class TurretController : MonoBehaviour
             }
             else
             {
-                //FIX THIS(without offset)!!!!!!
                 Vector3 temp=direct;
                 temp.y=0;
                 transform.rotation=Quaternion.LookRotation(temp);
@@ -205,7 +205,7 @@ public class TurretController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButton(1)&& !isReloading)
+        if(Input.GetMouseButton(1)&& !isReloading && chosenBulletIndex>=0)
         {
             RaycastHit hit2;
 
@@ -226,7 +226,7 @@ public class TurretController : MonoBehaviour
             //bul.transform.LookAt(hit.point+GetRandomPointInSphere(scatter));
             //print();
             rig.AddRelativeForce(Vector3.forward*speed);
-            StartCoroutine(reloading());
+            reload=StartCoroutine(reloading());
         }
 
 
@@ -237,14 +237,21 @@ public class TurretController : MonoBehaviour
         {
             if(bulletImageKeys.ContainsKey(temp))
             {
-                Debug.Log(temp+" "+chosenBulletIndex );
                 if(chosenBulletIndex!=temp)
                 {
+                int pastBulletIndex=chosenBulletIndex;
+                
                 if(chosenBulletIndex>0)
                 bulletImageKeys[chosenBulletIndex].color=standartBulletColor;
                 chosenBulletIndex=temp;
                 //bulletKeys[temp].GetImage().color=chosenBulletColor;
                 bulletImageKeys[temp].color=chosenBulletColor;
+                if(isReloading)
+                {
+                bulletImageKeys[pastBulletIndex].fillAmount=1;
+                StopCoroutine(reload);
+                reload=StartCoroutine(reloading());
+                }
                 }
                 //Debug.Log(bulletImageKeys[temp].color);
             }
@@ -276,7 +283,17 @@ public class TurretController : MonoBehaviour
     IEnumerator reloading()
     {
         isReloading=true;
-        yield return new WaitForSeconds(reloadTime);
+        float elapsedTime = 0f;
+        float currentValue = 0f;
+        while (elapsedTime < reloadTime)
+        {
+            currentValue = Mathf.Lerp(0, 1.01f, elapsedTime / reloadTime);
+
+            bulletImageKeys[chosenBulletIndex].fillAmount=currentValue;
+
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
         isReloading=false;
     }
      Vector3 GetRandomPointInSphere(float scatter_)
