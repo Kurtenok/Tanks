@@ -347,6 +347,7 @@
 -r:"Library/Bee/artifacts/1900b0aE.dag/UnityEngine.UI.ref.dll"
 "Assets/Scripts/Armor.cs"
 "Assets/Scripts/Bullet.cs"
+"Assets/Scripts/BulletType.cs"
 "Assets/Scripts/Canon.cs"
 "Assets/Scripts/CursorManager.cs"
 "Assets/Scripts/TurretController.cs"

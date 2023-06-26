@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
 public class TurretController : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -31,16 +32,35 @@ public class TurretController : MonoBehaviour
     [SerializeField] Image willPenetateScope;
     [SerializeField] Image NotWillPenetrateScope;
     [SerializeField] Image UnknownPenetratescope;
+    [System.Serializable]
+    public struct BulletType
+    {
+        public string name;
+        public Image image;
+        public GameObject bullet;
+        public float penetration;
+        public float damage;
+             public string GetName()
+    {return name;}
+      public Image GetImage()
+    {return image;}
+    public float GetPenetration()
+    {return penetration;}
+    public float GetDamage()
+    {return damage;}
+    }   
+    [SerializeField]  BulletType[] bulletTypes;
     bool isReloading=false;
     RaycastHit hit;
     Vector3 pastFrameCoord;
     float circleStartScale;
     Coroutine coroutine=null;
     Image scope;
+    
 
     void Start()
     {
-
+        StartCoroutine( SpawnBulletsImage());
     }
     private void FixedUpdate() {
         Ray ray;
@@ -54,7 +74,7 @@ public class TurretController : MonoBehaviour
                 {coroutine=StartCoroutine(LowScatter());}
             }
             pastFrameCoord=hit.point;
-
+            Vector2 screenPos;
             Vector3 target=hit.point;
             Vector3 direct= Vector3.RotateTowards(transform.forward,target-transform.position,rotSpeed,0f);
 
@@ -89,7 +109,7 @@ public class TurretController : MonoBehaviour
                    Vector3 screenPoint = Camera.main.WorldToScreenPoint(hit2.point);
                     screenPoint.z = 0;
                     
-                    Vector2 screenPos;
+                    
                     if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, screenPoint, Camera.main, out screenPos))
                     {
                         circle.transform.localPosition=screenPos-offSet;
@@ -130,7 +150,8 @@ public class TurretController : MonoBehaviour
                             {
                                 scope=Instantiate(NotWillPenetrateScope,canvas.transform.position,canvas.transform.rotation);
                             }
-                            scope.transform.parent=canvas.gameObject.transform;
+                            scope.transform.SetParent(canvas.gameObject.transform);
+                            //scope.transform.parent=canvas.gameObject.transform;
                             scope.transform.localScale=new Vector3(0.1f,0.1f,0.1f);
                         }
                         scope.transform.localPosition=screenPos-offSet;
@@ -210,6 +231,17 @@ public class TurretController : MonoBehaviour
        MeshRenderer sphereRenderer = sphere.GetComponent<MeshRenderer>();
        sphereRenderer.enabled = false;
        circleStartScale=circle.transform.localScale.x;
+
+
+        Debug.Log(bulletTypes.Length);
+       /*for(int i=bulletTypes.Length-1;i>=0;++i)
+       {
+            Vector3 pos=canvas.transform.position-new Vector3(50*i,Screen.height/2,0);
+            Image image=bulletTypes[i].GetImage();
+           GameObject.Instantiate(image,pos,canvas.transform.rotation);
+           Debug.Log(image.name);
+       }*/
+       
     }
     IEnumerator reloading()
     {
@@ -268,5 +300,26 @@ public class TurretController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         coroutine=null;
+    }
+    IEnumerator SpawnBulletsImage()
+    {
+        yield return new WaitForEndOfFrame();
+        int i=bulletTypes.Length-1;
+       foreach(BulletType bullet in bulletTypes)
+       {    
+            Image spawnedImage;
+            Image definedImage=bulletTypes[i].GetImage();
+            Vector2 pos=canvas.transform.position+new Vector3((Screen.width/2)-((definedImage.rectTransform.sizeDelta.x*definedImage.transform.localScale.x+40)*i),30,0);
+            Vector2 screenPos;
+            if(RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, pos, Camera.main, out screenPos))
+            {
+            
+           spawnedImage=GameObject.Instantiate(definedImage,pos,canvas.transform.rotation);
+           spawnedImage.transform.SetParent(canvas.gameObject.transform);
+           spawnedImage.transform.localPosition=screenPos;
+           //Debug.Log(image.name);
+           --i;
+            }
+       }
     }
 }
