@@ -14,9 +14,6 @@ public class TurretController : MonoBehaviour
     [SerializeField] float reloadTime;
     [SerializeField] GameObject bullet;
     [SerializeField] GameObject bulletSpawner;
-    [SerializeField] float damage;
-    [SerializeField] float penetration;
-    [SerializeField] float speed;
     [SerializeField] float rotSpeed;
     [SerializeField] float scatter=0;
     [SerializeField] float maxRightRotAgle=-1;
@@ -24,7 +21,6 @@ public class TurretController : MonoBehaviour
     [SerializeField] float maxUpRotAgle=90;
     [SerializeField] float maxDownRotAgle=-90;
     //[SerializeField] RectTransform circle;
-    [SerializeField] Vector2 offSet;
     [SerializeField] Image circle;
     [SerializeField] float lowScatter;
     [SerializeField] float maxScatter;
@@ -40,6 +36,7 @@ public class TurretController : MonoBehaviour
         public GameObject bullet;
         public float penetration;
         public float damage;
+        public float speed;
              public string GetName()
     {return name;}
       public Image GetImage()
@@ -115,7 +112,7 @@ public class TurretController : MonoBehaviour
                     
                     if (RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, screenPoint, Camera.main, out screenPos))
                     {
-                        circle.transform.localPosition=screenPos-offSet;
+                        circle.transform.localPosition=screenPos;
                         Armor armor;
                         if(hit2.collider.gameObject.TryGetComponent<Armor>(out armor))
                         {
@@ -159,7 +156,7 @@ public class TurretController : MonoBehaviour
                             scope.transform.SetParent(canvas.gameObject.transform);
                             //scope.transform.parent=canvas.gameObject.transform;
                             scope.transform.localScale=new Vector3(0.1f,0.1f,0.1f);
-                            scope.transform.localPosition=screenPos-offSet;
+                            scope.transform.localPosition=screenPos;
                             }
                         }
                         
@@ -225,7 +222,7 @@ public class TurretController : MonoBehaviour
             
             //bul.transform.LookAt(hit.point+GetRandomPointInSphere(scatter));
             //print();
-            rig.AddRelativeForce(Vector3.forward*speed);
+            rig.AddRelativeForce(Vector3.forward*bulletTypes[chosenBulletIndex-1].speed);
             reload=StartCoroutine(reloading());
         }
 
