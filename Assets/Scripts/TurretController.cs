@@ -313,10 +313,12 @@ public class TurretController : MonoBehaviour
             Vector2 screenPos;
             if(RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, pos, Camera.main, out screenPos))
             {
-            
+          
            spawnedImage=GameObject.Instantiate(definedImage,pos,canvas.transform.rotation);
+           
            spawnedImage.transform.SetParent(canvas.gameObject.transform);
            spawnedImage.transform.localPosition=screenPos;
+           spawnedImage.transform.localScale=new Vector3(0.4f,0.4f,0.4f);
            //Debug.Log(image.name);
            --i;
             }

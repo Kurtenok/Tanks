@@ -1056,6 +1056,22 @@ MonoBehaviour:
   willPenetateScope: {fileID: 7595163207626755484, guid: 01f5207a77073ff4a9d126bc74c49e46, type: 3}
   NotWillPenetrateScope: {fileID: 8461793177141156671, guid: 11aac6a108645a94dbbdb8f2eb41a1af, type: 3}
   UnknownPenetratescope: {fileID: 8813107958143900003, guid: ecf90ccf343123045b5db742ecd5b123, type: 3}
+  bulletTypes:
+  - name: AP
+    image: {fileID: 5601155684577458558, guid: a4bf19c6b79afbb47aab5bb26bc627b4, type: 3}
+    bullet: {fileID: 0}
+    penetration: 12
+    damage: 5
+  - name: HE
+    image: {fileID: 7720691108372094123, guid: bf7513df3f60ac54d8863a2a8127de37, type: 3}
+    bullet: {fileID: 0}
+    penetration: 17
+    damage: 2
+  - name: APHE
+    image: {fileID: 4240959886775251072, guid: 1e3a2fa1b2b61a74983c1df6494277e4, type: 3}
+    bullet: {fileID: 0}
+    penetration: 17
+    damage: 2
 --- !u!135 &827352396
 SphereCollider:
   m_ObjectHideFlags: 0
