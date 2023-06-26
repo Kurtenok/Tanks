@@ -56,7 +56,10 @@ public class TurretController : MonoBehaviour
     float circleStartScale;
     Coroutine coroutine=null;
     Image scope;
-    
+    [SerializeField] Color standartBulletColor;
+    Color chosenBulletColor=Color.green;
+    int chosenBulletIndex=-1;
+    Dictionary<int,Image> bulletImageKeys=new Dictionary<int,Image>();
 
     void Start()
     {
@@ -132,9 +135,12 @@ public class TurretController : MonoBehaviour
                                 Destroy(scope.gameObject);
                                 scope=null;
                             }
-                            if(penetration>=way)
+
+                            if(chosenBulletIndex-1>-1)
                             {
-                               if(penetration>way+penetration/10)
+                            if(bulletTypes[chosenBulletIndex-1].penetration>=way)
+                            {
+                               if(bulletTypes[chosenBulletIndex-1].penetration>way+bulletTypes[chosenBulletIndex-1].penetration/10)
                                 {
                                     scope=Instantiate(willPenetateScope,canvas.transform.position,canvas.transform.rotation);
                                     
@@ -153,8 +159,10 @@ public class TurretController : MonoBehaviour
                             scope.transform.SetParent(canvas.gameObject.transform);
                             //scope.transform.parent=canvas.gameObject.transform;
                             scope.transform.localScale=new Vector3(0.1f,0.1f,0.1f);
+                            scope.transform.localPosition=screenPos-offSet;
+                            }
                         }
-                        scope.transform.localPosition=screenPos-offSet;
+                        
                     }
 
                 
@@ -208,9 +216,9 @@ public class TurretController : MonoBehaviour
                 //Debug.Log("HIT "+ hit2.point);
                 bulletSpawner.transform.LookAt(hit2.point);
             }
-            GameObject bul= Instantiate(bullet,bulletSpawner.transform.position,bulletSpawner.transform.rotation);
-            bul.SendMessage("SetDamage",damage);
-            bul.SendMessage("SetPenetration",penetration);
+            GameObject bul= Instantiate(bulletTypes[chosenBulletIndex-1].bullet,bulletSpawner.transform.position,bulletSpawner.transform.rotation);
+            bul.SendMessage("SetDamage",bulletTypes[chosenBulletIndex-1].damage);
+            bul.SendMessage("SetPenetration",bulletTypes[chosenBulletIndex-1].penetration);
             bul.SendMessage("SetOrigin",this.gameObject);
             Rigidbody rig;
             rig = bul.GetComponent<Rigidbody>();
@@ -220,6 +228,28 @@ public class TurretController : MonoBehaviour
             rig.AddRelativeForce(Vector3.forward*speed);
             StartCoroutine(reloading());
         }
+
+
+
+
+        int temp;
+        if(int.TryParse(Input.inputString,out temp))
+        {
+            if(bulletImageKeys.ContainsKey(temp))
+            {
+                Debug.Log(temp+" "+chosenBulletIndex );
+                if(chosenBulletIndex!=temp)
+                {
+                if(chosenBulletIndex>0)
+                bulletImageKeys[chosenBulletIndex].color=standartBulletColor;
+                chosenBulletIndex=temp;
+                //bulletKeys[temp].GetImage().color=chosenBulletColor;
+                bulletImageKeys[temp].color=chosenBulletColor;
+                }
+                //Debug.Log(bulletImageKeys[temp].color);
+            }
+        }
+        
     }
     private void Awake() {
        sphere=GameObject.CreatePrimitive(PrimitiveType.Sphere);
@@ -233,7 +263,7 @@ public class TurretController : MonoBehaviour
        circleStartScale=circle.transform.localScale.x;
 
 
-        Debug.Log(bulletTypes.Length);
+       standartBulletColor=bulletTypes[0].GetImage().color;
        /*for(int i=bulletTypes.Length-1;i>=0;++i)
        {
             Vector3 pos=canvas.transform.position-new Vector3(50*i,Screen.height/2,0);
@@ -305,22 +335,26 @@ public class TurretController : MonoBehaviour
     {
         yield return new WaitForEndOfFrame();
         int i=bulletTypes.Length-1;
+        int j=0;
        foreach(BulletType bullet in bulletTypes)
        {    
             Image spawnedImage;
             Image definedImage=bulletTypes[i].GetImage();
-            Vector2 pos=canvas.transform.position+new Vector3((Screen.width/2)-((definedImage.rectTransform.sizeDelta.x*definedImage.transform.localScale.x+40)*i),30,0);
+            Vector2 pos=canvas.transform.position+new Vector3((Screen.width/2)-((definedImage.rectTransform.sizeDelta.x*definedImage.transform.localScale.x+40)*j),30,0);
             Vector2 screenPos;
             if(RectTransformUtility.ScreenPointToLocalPointInRectangle(canvas, pos, Camera.main, out screenPos))
             {
           
            spawnedImage=GameObject.Instantiate(definedImage,pos,canvas.transform.rotation);
-           
+           spawnedImage.color=standartBulletColor;
            spawnedImage.transform.SetParent(canvas.gameObject.transform);
            spawnedImage.transform.localPosition=screenPos;
            spawnedImage.transform.localScale=new Vector3(0.4f,0.4f,0.4f);
+
+           bulletImageKeys.Add(i+1,spawnedImage);
            //Debug.Log(image.name);
-           --i;
+           --i;   
+           j++;
             }
        }
     }
